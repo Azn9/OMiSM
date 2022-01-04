@@ -41,8 +41,8 @@
             this.hsFrom.Name = "hsFrom";
             this.hsFrom.Size = new System.Drawing.Size(580, 95);
             this.hsFrom.TabIndex = 0;
-            this.hsFrom.DragDrop += new System.Windows.Forms.DragEventHandler(this.hsDragDrop);
-            this.hsFrom.DragEnter += new System.Windows.Forms.DragEventHandler(this.fileDragEnter);
+            this.hsFrom.DragDrop += new System.Windows.Forms.DragEventHandler(this.HsDragDrop);
+            this.hsFrom.DragEnter += new System.Windows.Forms.DragEventHandler(this.FileDragEnter);
             // 
             // hsTo
             // 
@@ -52,8 +52,8 @@
             this.hsTo.Name = "hsTo";
             this.hsTo.Size = new System.Drawing.Size(580, 108);
             this.hsTo.TabIndex = 1;
-            this.hsTo.DragDrop += new System.Windows.Forms.DragEventHandler(this.hsDragDrop);
-            this.hsTo.DragEnter += new System.Windows.Forms.DragEventHandler(this.fileDragEnter);
+            this.hsTo.DragDrop += new System.Windows.Forms.DragEventHandler(this.HsDragDrop);
+            this.hsTo.DragEnter += new System.Windows.Forms.DragEventHandler(this.FileDragEnter);
             // 
             // doButton
             // 
@@ -63,7 +63,7 @@
             this.doButton.TabIndex = 2;
             this.doButton.Text = "Do";
             this.doButton.UseVisualStyleBackColor = true;
-            this.doButton.Click += new System.EventHandler(this.doHSCopy);
+            this.doButton.Click += new System.EventHandler(this.DoHsCopy);
             // 
             // Form2
             // 
@@ -75,9 +75,9 @@
             this.Controls.Add(this.hsFrom);
             this.Name = "Form2";
             this.Text = "Form2";
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.hsClose);
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.HsClose);
             this.Load += new System.EventHandler(this.Form2_Load);
-            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.hsKeyPress);
+            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.HsKeyPress);
             this.ResumeLayout(false);
 
         }

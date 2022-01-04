@@ -1,24 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OMtoSMConverter
 {
     public partial class Form2 : Form
     {
-        public Form1 parent;
-        private bool ready;
+        public new Form1 Parent;
+        private bool _ready;
         public Form2()
         {
             InitializeComponent();
-            ready = false;
+            _ready = false;
         }
 
         private void Form2_Load(object sender, EventArgs e)
@@ -32,25 +25,22 @@ namespace OMtoSMConverter
         }
 
         //File read and access
-        private void fileDragEnter(object sender, DragEventArgs e)
+        private void FileDragEnter(object sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop))
-                e.Effect = DragDropEffects.Copy;
-            else
-                e.Effect = DragDropEffects.None;
+            e.Effect = e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.Copy : DragDropEffects.None;
         }
-        private void hsDragDrop(object sender, DragEventArgs e)
+        private void HsDragDrop(object sender, DragEventArgs e)
         {
             // Copied from fileBeg_DragDrop
             //Activate the window to focus it on front
             this.Activate();
 
             //Get the filenames of the dropped stuff
-            object data = e.Data.GetData(DataFormats.FileDrop);
-            string[] allDroppedFiles = (string[])data;
+            var data = e.Data.GetData(DataFormats.FileDrop);
+            var allDroppedFiles = (string[])data;
 
             //Search all directories for files and remove all directories
-            HashSet<string> allFoundFiles = parent.foundFiles(allDroppedFiles);
+            var allFoundFiles = Parent.FoundFiles(allDroppedFiles);
             if (sender.Equals(hsFrom))
             {
                 hsFrom.Items.Clear();
@@ -61,13 +51,13 @@ namespace OMtoSMConverter
                 }
                 else
                 {
-                    foreach (string file in allFoundFiles)
+                    foreach (var file in allFoundFiles)
                     {
                         if (file.Contains("[Key") && hsFrom.Items.Count < 1) hsFrom.Items.Add(file);
                         else
                         {
                             if (file.Substring(file.Length-4) == ".osu")
-                            hsTo.Items.Add(file);
+                                hsTo.Items.Add(file);
                         }
                     }
                 }
@@ -75,54 +65,47 @@ namespace OMtoSMConverter
             else if (sender.Equals(hsTo))
             {
                 hsTo.Items.Clear();
-                foreach (string file in allFoundFiles) hsTo.Items.Add(file);
+                foreach (var file in allFoundFiles) hsTo.Items.Add(file);
             }
-            if ((hsFrom.Items.Count == 1) && (hsTo.Items.Count >= 1)) ready = true;
-            doButton.Text = "Do";
+            if ((hsFrom.Items.Count == 1) && (hsTo.Items.Count >= 1)) _ready = true;
+            doButton.Text = @"Do";
         }
 
         //Usability
-        private void hsKeyPress(object sender, KeyPressEventArgs e)
+        private void HsKeyPress(object sender, KeyPressEventArgs e)
         {
-            if (e.KeyChar == 'c')
-            {
-                parent.Show();
-                this.Close();
-            }
+            if (e.KeyChar != 'c')
+                return;
+            
+            Parent.Show();
+            this.Close();
         }
-        private void hsClose(object sender, FormClosedEventArgs e)
+        private void HsClose(object sender, FormClosedEventArgs e)
         {
-            parent.Close();
+            Parent.Close();
         }
 
         //Actually doing stuff
-        private void doHSCopy(object sender, EventArgs e)
+        private void DoHsCopy(object sender, EventArgs e)
         {
-            if (ready)
+            if (_ready)
             {
-                Beatmap source = Beatmap.getRawOsuFile((string)hsFrom.Items[0]);
-                HashSet<Beatmap> outmaps = new HashSet<Beatmap>();
+                var source = Beatmap.GetRawOsuFile((string)hsFrom.Items[0]);
                 foreach (string dest in hsTo.Items)
                 {
-                    int lastSlash = dest.LastIndexOf("\\");
-                    string folder = dest.Substring(0, lastSlash);
-                    string filename = dest.Remove(0, lastSlash);
-                    /* make backup in different diff name
-                    //First make a copy in BAK folder
-                    string bakfolder = folder + "\\BAK" ;
-                    Directory.CreateDirectory(bakfolder);
-                    File.Copy(dest, bakfolder + filename+"b", true);
-                    */
-                    Beatmap toMap = Beatmap.getRawOsuFile((string)dest);
-                    toMap.backup(folder);
-                    toMap.copyHS(source);
-                    toMap.writeOut(folder);
+                    var lastSlash = dest.LastIndexOf("\\", StringComparison.Ordinal);
+                    var folder = dest.Substring(0, lastSlash);
+
+                    var toMap = Beatmap.GetRawOsuFile(dest);
+                    toMap.Backup(folder);
+                    toMap.CopyHs(source);
+                    toMap.WriteOut(folder);
                     
                 }
             }
             else
             {
-                doButton.Text = "You haven't shown me all the files yet!";
+                doButton.Text = @"You haven't shown me all the files yet!";
             }
         }
 
